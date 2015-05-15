@@ -88,12 +88,8 @@ def get_request_field(name):
 # http://stackoverflow.com/questions/21411497/flask-jsonify-a-list-of-objects
 class MyJSONEncoder(JSONEncoder):
     def default(self, obj):
-        if isinstance(obj, Category):
-            return {
-                'id': obj.id,
-                'name': obj.name,
-                'image_url': obj.image_url
-            }
+        if isinstance(obj, Category) or isinstance(obj, CatalogItem):
+            return obj.toDict()
         return super(MyJSONEncoder, self).default(obj)
 
 
