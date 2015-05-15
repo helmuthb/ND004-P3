@@ -22,7 +22,7 @@ command `vagrant up`. Then connect to the VM with `vagrant ssh`:
 Instead of `vagrant ssh` you can use an SSH client (e.g. putty) and connect with `localhost` on port `2222`.
 Use username `vagrant` and password `vagrant` when asked for login details.
 
-The vm_config.sh file has been adjusted to install the needed python libraries.
+The `vm_config.sh` file has been adjusted to install the needed python libraries.
 At the first run the application will create the database to store the catalog items.
 ```
   cd /vagrant/catalog
@@ -63,6 +63,16 @@ methods, two query parameters allow overriding the method and output format.
  - `operation=delete` performs a delete operation even if POST is used
  - `type=json` will create output in JSON format
 
+## Extensions ###
+
+The application allows the specification of an image URL for categories and catalog
+items.
+In addition, for deleting an object, a nonce is used to secure from replay attacks.
+Every nonce is only valid for this session and for deleting the specific object.
+It has to be provided with the delete operation through the `nonce` query parameter.
+
 ## Copyright and license
 
-The application is in the public domain.
+Some of the application codes have been copied from documentation (e.g. Google Sign-In)
+or from stackoverflow (marked in the code).
+My contributions are in the public domain.
