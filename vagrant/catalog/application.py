@@ -284,7 +284,7 @@ def updateDeleteItem(id):
     if request_wants_delete():
         # verify the nonce
         nonce1 = request.args.get('nonce')
-        nonce2 = getNonce('item',id)
+        nonce2 = getNonce('item', id)
         if nonce1 != nonce2:
             return flex_render(
                 'error.html',

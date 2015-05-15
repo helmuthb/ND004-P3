@@ -19,6 +19,7 @@ class Category(db.Model):
         }
     pass
 
+
 class CatalogItem(db.Model):
     __tablename__ = 'catalog_item'
     id = db.Column(db.Integer, primary_key=True)
