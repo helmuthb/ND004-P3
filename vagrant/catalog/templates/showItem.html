@@ -2,12 +2,16 @@
 {% block title %}show item {{item.name}}{% endblock %}
 {% block head %}
   <h1>Item '{{item.name}}'</h1>
+  Category: <a href="/categories/{{item.category.id}}">{{item.category.name}}</a><br>
   {% if item.image_url %}
   <img src="{{item.image_url}}" class="img-responsive">
   <br>
   {% endif %}
+  <p>{{item.description|markdown}}</p>
+  {% if AUTHENTICATED %}
   <a href="#" class="btn btn-info" role="button" data-toggle="modal" data-target="#editItem">Edit Item</a>
   <a href="#" class="btn btn-danger" role="button" data-toggle="modal" data-target="#delItem">Delete Item</a>
+  {% endif %}
 {% endblock %}
 {% block content %}
   {% if AUTHENTICATED %}
