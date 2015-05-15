@@ -1,3 +1,74 @@
+{% macro editCategory(fname, id=None, name='', image_url='', hidden=False) -%}
+  <!-- Modal: add/edit a category -->
+  <div class="modal fade" id="{{fname}}" tabindex="-1" role="dialog" aria-labelledby="{{fname}}Title" {% if hidden %}aria-hidden="true"{% endif %}>
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form role="form" method="post" action="/categories/{% if id %}{{id}}{% endif %}">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="newCategoryTitle">{% if id %}Edit Category '{{name}}'{% else %}New Category{% endif %}</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="{{fname}}_name">Name:</label>
+              <input type="text" id="{{fname}}_name" name="name" class="form-control" value="{{name}}" required>
+            </div>
+            <div class="form-group">
+              <label for="{{fname}}_image_url">Image URL:</label>
+              <input type="text" id="{{fname}}_image_url" name="image_url" value="{{image_url}}" class="form-control">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <input type="submit" class="btn btn-primary" value="{% if id %}Update{% else %}Create{% endif %}">
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{%- endmacro %}
+{% macro editItem(fname, id=None, name='', description='', image_url='', category_id='', hidden=False) -%}
+  <!-- Modal: add/edit an item -->
+  <div class="modal fade" id="{{fname}}" tabindex="-1" role="dialog" aria-labelledby="{{fname}}Title" {% if hidden %}aria-hidden="true"{% endif %}>
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form role="form" method="post" action="/items/{% if id %}{{id}}{% endif %}">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="{{fname}}Title">{% if id %}Edit Item '{{name}}'{% else %}Create Item{% endif %}</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="{{fname}}_name">Name:</label>
+              <input type="text" id="{{fname}}_name" name="name" class="form-control" value="{{name}}" required>
+            </div>
+            <div class="form-group">
+              <label for="{{fname}}_category">Category:</label>
+              <select id="{{fname}}_category" name="category_id" class="form-control" required>
+                <option value="">-- Category --</option>
+                {% for category in categories %}
+                <option value="{{category.id}}" {% if category.id == category_id %}selected="selected"{% endif %}>{{category.name}}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="{{fname}}_description">Description:</label>
+              <textarea id="{{fname}}_description" name="description" class="form-control">{{description}}</textarea>
+            </div>
+            <div class="form-group">
+              <label for="{{fname}}_image_url">Image URL:</label>
+              <input type="text" id="{{fname}}_image_url" name="image_url" class="form-control" value="{{image_url}}">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <input type="submit" class="btn btn-primary" value="{% if id %}Update{% else %}Create{% endif %}">
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{%- endmacro %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,7 +88,7 @@ function start() {
   });
 }
 </script>
-<title>Catalog - {% block title %}{% block title %}</title>
+<title>Catalog - {% block title %}{% endblock %}</title>
 </head>
 <body>
   <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -38,7 +109,7 @@ function start() {
           {% if AUTHENTICATED %}
           <li><a href="#" data-toggle="modal" data-target="#newCategory">New Category</a></li>
           <li><a href="#" data-toggle="modal" data-target="#newItem">New Item</a></li>
-          {% endif %=}
+          {% endif %}
         </ul>
         <ul class="nav navbar-nav navbar-right">
           <li>
@@ -58,78 +129,17 @@ function start() {
       </div><!--/.nav-collapse -->
     </div>
   </nav>
-  <div class="container" style="margin-top:50px;">
-  {% block content %}{% endblock %}
+  <div class="jumbotron">
+    <div class="container" style="margin-top:50px;">
+      {% block head %}{% endblock %}
+    </div>
+  </div>
+  <div class="container">
+    {% block content %}{% endblock %}
   </div>
   {% if AUTHENTICATED %}
-  <!-- Modal: add a category -->
-  <div class="modal fade" id="newCategory" tabindex="-1" role="dialog" aria-labelledby="newCategoryTitle" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <form role="form" method="post" action="/categories/">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="newCategoryTitle">New Category</h4>
-          </div>
-          <div class="modal-body">
-            <div class="form-group">
-              <label for="ncf_name">Name:</label>
-              <input type="text" id="ncf_name" name="name" class="form-control" required>
-            </div>
-            <div class="form-group">
-              <label for="ncf_image_url">Image URL:</label>
-              <input type="text" id="ncf_image_url" name="image_url" class="form-control">
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <input type="submit" class="btn btn-primary" value="Create">
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-  <!-- Modal: add an item -->
-  <div class="modal fade" id="newItem" tabindex="-1" role="dialog" aria-labelledby="newItemTitle" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <form role="form" method="post" action="/items/">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="newItemTitle">Create New Item</h4>
-          </div>
-          <div class="modal-body">
-            <div class="form-group">
-              <label for="nif_name">Name:</label>
-              <input type="text" id="nif_name" name="name" class="form-control" required>
-            </div>
-            <div class="form-group">
-              <label for="nif_category">Category:</label>
-              <select id="nif_category" name="category_id" class="form-control" required>
-                <option value="">-- Category --</option>
-                
-                <option value="1">Test</option>
-                
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="nif_description">Description:</label>
-              <textarea id="nif_description" name="description" class="form-control"></textarea>
-            </div>
-            <div class="form-group">
-              <label for="nif_image_url">Image URL:</label>
-              <input type="text" id="nif_image_url" name="image_url" class="form-control">
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <input type="submit" class="btn btn-primary" value="Create">
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-  {% endif %}
+  {{ editCategory('newCategory') }}
+  {{ editItem('newItem') }}
   <script>
 function signOut() {
   $.ajax({
@@ -147,12 +157,15 @@ function signOut() {
     processData: false
   });
 }
+  </script>
+  {% else %}
+  <script>
 function signInCallback(authResult) {
   if (authResult['code']) {
     // Send the code to the server
     $.ajax({
       type: 'POST',
-      url: '/gconnect?state=2POTUU9VKQQEKP4S0N103K9RACL7CIYQ',
+      url: '/gconnect?state={{STATE}}',
       contentType: 'application/octet-stream; charset=utf-8',
       success: function(result) {
         // reload page as now we are logged in
@@ -170,5 +183,6 @@ function signInCallback(authResult) {
   }
 }
   </script>
+  {% endif %}
 </body>
 </html>

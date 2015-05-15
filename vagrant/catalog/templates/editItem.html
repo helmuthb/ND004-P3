@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+{% block title %}edit item {{name}}{% endblock %}
+{% block head %}
+  <h1>Item '{{name}}'</h1>
+  {% if AUTHENTICATED %}
+  {{editItem('editItem', id, name, description, image_url, category_id, False)}}
+  {% else %}
+  <h2>You have to be authenticated to edit an item</h2>
+  {% endif %}
+{% endblock %}

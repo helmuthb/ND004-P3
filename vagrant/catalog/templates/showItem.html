@@ -1,67 +1,36 @@
-	    <a href="#" class="btn btn-info" role="button" data-toggle="modal" data-target="#editItem">Edit Item</a>	    
-	    <a href="#" class="btn btn-danger" role="button" data-toggle="modal" data-target="#delItem">Delete Item</a>	    
-		  <!-- Modal: edit an item -->
-		  <div class="modal fade" id="editItem" tabindex="-1" role="dialog" aria-labelledby="editItemTitle" aria-hidden="true">
-		    <div class="modal-dialog">
-		      <div class="modal-content">
-		        <form role="form" method="post" action="/items/3">
-		          <div class="modal-header">
-		            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-		            <h4 class="modal-title" id="editItemTitle">Edit Item 'hihihi'</h4>
-		          </div>
-		          <div class="modal-body">
-		            <div class="form-group">
-		              <label for="eif_name">Name:</label>
-		              <input type="text" id="eif_name" name="name" class="form-control" value="hihihi" required>
-		            </div>
-		            <div class="form-group">
-		              <label for="eif_category">Category:</label>
-		              <select id="eif_category" name="category_id" class="form-control" required>
-		                <option value="">-- Category --</option>
-		                
-		                <option value="1" >Test</option>
-		                
-		                <option value="3" selected="selected">fgfgg</option>
-		                
-		              </select>
-		            </div>
-		            <div class="form-group">
-		              <label for="eif_description">Description:</label>
-		              <textarea id="eif_description" name="description" class="form-control"></textarea>
-		            </div>
-		            <div class="form-group">
-		              <label for="eif_description">Image URL:</label>
-		              <input type="text" id="eif_image_url" name="image_url" value="" class="form-control">
-		            </div>
-		          </div>
-		          <div class="modal-footer">
-		            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-		            <input type="submit" class="btn btn-primary" value="Update">
-		          </div>
-		        </form>
-		      </div>
-		    </div>
-		  </div>
-		  <!-- Modal: delete an item -->
-		  <div class="modal fade" id="delItem" tabindex="-1" role="dialog" aria-labelledby="delItemTitle" aria-hidden="true">
-		    <div class="modal-dialog">
-		      <div class="modal-content">
-		        <form role="form" method="post" action="/items/3?operation=delete">
-		          <div class="modal-header">
-		            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-		            <h4 class="modal-title" id="delItemTitle">Delete Item 'hihihi'</h4>
-		          </div>
-		          <div class="modal-body">
-		          	Are you sure you want to delete the item 'hihihi'?
-  	          </div>
-		          <div class="modal-footer">
-		            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-		            <input type="submit" class="btn btn-primary" value="Delete">
-		          </div>
-		        </form>
-		      </div>
-		    </div>
-		  </div>
-	    
+{% extends "layout.html" %}
+{% block title %}show item {{item.name}}{% endblock %}
+{% block head %}
+  <h1>Item '{{item.name}}'</h1>
+  {% if item.image_url %}
+  <img src="{{item.image_url}}" class="img-responsive">
+  <br>
+  {% endif %}
+  <a href="#" class="btn btn-info" role="button" data-toggle="modal" data-target="#editItem">Edit Item</a>
+  <a href="#" class="btn btn-danger" role="button" data-toggle="modal" data-target="#delItem">Delete Item</a>
+{% endblock %}
+{% block content %}
+  {% if AUTHENTICATED %}
+    {{ editItem('editItem', item.id, item.name, item.description, item.image_url, item.category_id) }}
+	  <!-- Modal: delete an item -->
+	  <div class="modal fade" id="delItem" tabindex="-1" role="dialog" aria-labelledby="delItemTitle" aria-hidden="true">
+	    <div class="modal-dialog">
+	      <div class="modal-content">
+	        <form role="form" method="post" action="/items/{{item.id}}?operation=delete&amp;nonce={{nonce}}">
+	          <div class="modal-header">
+	            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	            <h4 class="modal-title" id="delItemTitle">Delete Item '{{item.name}}'</h4>
+	          </div>
+	          <div class="modal-body">
+	           	Are you sure you want to delete the item '{{item.name}}'?
+            </div>
+	          <div class="modal-footer">
+	            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	            <input type="submit" class="btn btn-primary" value="Delete">
+	          </div>
+	        </form>
+	      </div>
+	    </div>
 	  </div>
-  </div>
+  {% endif %}
+{% endblock %}

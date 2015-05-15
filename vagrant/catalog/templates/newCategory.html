@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+{% block title %}new category {{name}}{% endblock %}
+{% block head %}
+  <h1>New Category</h1>
+  <h2>Error: {{error}}</h2>
+  {% if AUTHENTICATED %}
+  {{editItem('editCategory', None, name, image_url, False)}}
+  {% else %}
+  <h2>You have to be authenticated to create a category</h2>
+  {% endif %}
+{% endblock %}

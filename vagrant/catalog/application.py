@@ -13,6 +13,7 @@ from models import Category
 from models import CatalogItem
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import FlowExchangeError
+from functools import wraps
 import pprint
 import httplib2
 import requests
@@ -61,10 +62,13 @@ def getNonce(table, id):
 # decorator: is the user logged in?
 # Otherwise redirect to page /login
 def requires_login(func):
+    @wraps(func)
     def func_wrapper(*args, **kwargs):
         # is the user not yet logged in?
         if session.get('access_token') is None:
             return redirect(url_for('showLogin'))
+        else:
+            return func(*args, **kwargs)
     return func_wrapper
 
 
@@ -164,8 +168,8 @@ def listCategories():
 
 
 # add a category: post to /categories/
-@requires_login
 @app.route('/categories/', methods=['POST'])
+@requires_login
 def addCategory():
     # get category data from request
     name = get_request_field('name')
@@ -197,8 +201,8 @@ def showCategory(id):
 
 
 # update (delete) a specific category: post/put/delete /categories/<id>
-@requires_login
 @app.route('/categories/<int:id>', methods=['POST', 'PUT', 'DELETE'])
+@requires_login
 def updateDeleteCategory(id):
     # load the specified category from DB
     category = db.session.query(Category).filter_by(id=id).one()
@@ -238,8 +242,8 @@ def updateDeleteCategory(id):
 
 
 # add an item: post to /items/
-@requires_login
 @app.route('/items/', methods=['POST'])
+@requires_login
 def addItem():
     # load category from request data
     category_id = get_request_field('category_id')
@@ -276,8 +280,8 @@ def showItem(id):
 
 
 # update/delete an item: post/put/delete /items/<id>
-@requires_login
 @app.route('/items/<int:id>', methods=['POST', 'PUT', 'DELETE'])
+@requires_login
 def updateDeleteItem(id):
     # load the specified item from DB
     item = db.session.query(CatalogItem).filter_by(id=id).one()
@@ -308,7 +312,7 @@ def updateDeleteItem(id):
     category = db.session.query(Category).filter_by(id=category_id).one()
     if name == '':
         return flex_render(
-            'editCategory.html',
+            'editItem.html',
             name=name, description=description,
             category_id=category_id, image_url=image_url, id=id,
             error='Field "name" is mandatory')
@@ -365,8 +369,10 @@ def gconnect():
             json.dumps("Token's client ID does not match app's."), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
+    # check if user is already logged in
     stored_token = session.get('access_token')
     stored_gplus_id = session.get('gplus_id')
+    gplus_id = result['user_id']
     if stored_token is not None and gplus_id == stored_gplus_id:
         response = make_response(
             json.dumps('Current user is already connected.'), 200)
